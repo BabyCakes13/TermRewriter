@@ -5,6 +5,7 @@ class TermTree:
     """
     This will be the tree representation of a given expression.
     """
+
     def __init__(self):
         self.expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
         self.arityMap = {'f': 2, 'i': 1, 'e': 2, 'j': 0}
@@ -24,10 +25,8 @@ class TermTree:
             if character in self.delimitators.keys():
                 self.delimitators[character](content)
                 content = ""
-                print("Root: \n" + self.root.treeString())
             else:
                 content = content + character
-
 
     def handleOpenBracket(self, content):
         # print(self.handleOpenBracket)
@@ -86,6 +85,13 @@ class TermTree:
 if __name__=="__main__":
     test = TermTree()
     test.parseExpression()
+    root = test.getRoot()
+    print(root.treeString(True))
+
+    # print("------------------------------")
+    # print(test.root.children[0].position)
+    # print("------------------------------")
+
     # test.validateTerm('f')
     # test.validateTerm('g')
     # test.validateTerm('0')

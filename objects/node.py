@@ -2,6 +2,9 @@ class Node:
     """
     This will be a term of an expression.
     """
+
+    POSITION = False # When enabled, the tree also displays the position of the terms.
+
     def __init__(self, content, parent):
         self.content = content
         self.parent = parent
@@ -9,6 +12,18 @@ class Node:
 
     def adoptChild(self, child):
         self.children.append(child)
+
+    @property
+    def position(self):
+        """
+        Get the position on the spot by recusrivelly searching up in the tree.
+        """
+        if self.parent:
+            return str(self.parent.position + str(self.parent.children.index(self) + 1))
+        else:
+            # If the node does not have a parent, the node is the root which has empty string as position.
+            return ""
+
 
     def getArity(self):
         """
@@ -32,23 +47,27 @@ class Node:
 
         return string
 
-    def treeStringRecursive(self, prefix):
+    def treeStringRecursive(self, prefix, position):
         """
-        Functi
+        Function which constructs the tree.
         """
         string = ""
         for child in self.children:
-            if child == self.children[-1]:
-                string = string + (prefix + "└── " + child.content) + "\n"
-                string = string + child.treeStringRecursive( prefix + "    " )
+            if position:
+                p = " (" + child.position + ")"
             else:
-                string = string + (prefix + "├── " + child.content) + "\n"
-                string = string + child.treeStringRecursive( prefix + "│   " )
+                p = ""
+            if child == self.children[-1]:
+                string = string + (prefix + "└── " + child.content) + p + "\n"
+                string = string + child.treeStringRecursive( prefix + "    ", position)
+            else:
+                string = string + (prefix + "├── " + child.content) + p + "\n"
+                string = string + child.treeStringRecursive( prefix + "│   ", position)
 
         return string
 
-    def treeString(self):
+    def treeString(self, position=False):
         """
         Function which pretty prints the expression as tree.
         """
-        return self.content + "\n" + self.treeStringRecursive("")
+        return self.content + self.position + "\n" + self.treeStringRecursive("", position)
