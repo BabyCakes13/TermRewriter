@@ -37,11 +37,11 @@ class Node:
         string = self.content
 
         if len(self.children) > 0:
-            string = string + " ("
+            string = string + "("
             delimitator = ""
             for child in self.children:
-                string = string + delimitator + str(child)
-                delimitator = ", "
+                string = string + delimitator + child.expressionString()
+                delimitator = ","
             string = string + ")"
 
         return string
