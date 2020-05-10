@@ -24,7 +24,6 @@ class Node:
             # If the node does not have a parent, the node is the root which has empty string as position.
             return ""
 
-
     def getArity(self):
         """
         The arity of the function is actually given by the number of its children.
