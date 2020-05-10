@@ -7,7 +7,8 @@ class TermTree:
     """
 
     def __init__(self):
-        self.expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
+        # self.expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
+        self.expression = "x"
         self.arityMap = {'f': 2, 'i': 1, 'e': 2, 'j': 0}
         self.delimitators = {
         '(': self.handleOpenBracket,
@@ -27,6 +28,10 @@ class TermTree:
                 content = ""
             else:
                 content = content + character
+
+        if len(content) > 0 and self.root is None:
+            # for the case when the term has no delimitators
+            self.handleOpenBracket(content)
 
     def handleOpenBracket(self, content):
         # print(self.handleOpenBracket)
