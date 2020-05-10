@@ -70,4 +70,4 @@ class Node:
         """
         Function which pretty prints the expression as tree.
         """
-        return self.content + self.position + "\n" + self.treeStringRecursive("", position)
+        return self.content + " (" + self.position + ") " + "\n" + self.treeStringRecursive("", position)

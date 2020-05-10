@@ -7,8 +7,8 @@ class TermTree:
     """
 
     def __init__(self):
-        # self.expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
-        self.expression = "x"
+        self.expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
+        # self.expression = "x"
         self.arityMap = {'f': 2, 'i': 1, 'e': 2, 'j': 0}
         self.delimitators = {
         '(': self.handleOpenBracket,
@@ -91,7 +91,10 @@ if __name__=="__main__":
     test = TermTree()
     test.parseExpression()
     root = test.getRoot()
-    print(root.treeString(True))
+    # print(root.content)
+
+    first_child = root.children[0]
+    print(first_child.treeString(True))
 
     # print("------------------------------")
     # print(test.root.children[0].position)
