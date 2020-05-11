@@ -20,7 +20,7 @@ class TermTree:
 
         self.parseExpression()
 
-    def parseExpression(self):
+    def parseExpression(self): # done
         content = ""
 
         for i, character in enumerate(self.expression):
@@ -42,7 +42,7 @@ class TermTree:
             print("Invalid expression. Try closing all parentheses.")
             return False
 
-    def handleNewTerm(self, content, i):
+    def handleNewTerm(self, content, i): # done
         # PS. this also treats the case when there is only one item: s = x
         if len(content) == 0:
             print("Empty item found at position %d" % i)
@@ -53,7 +53,7 @@ class TermTree:
 
         return new_node
 
-    def handleOpenBracket(self, content, i):
+    def handleOpenBracket(self, content, i): # done
         new_node = self.handleNewTerm(content, i)
 
         if self.current:
@@ -61,12 +61,12 @@ class TermTree:
 
         self.current = new_node
 
-    def handleComma(self, content, i):
+    def handleComma(self, content, i): # done
         if content:
             new_node = node.Node(content, self.current)
             self.current.adoptChild(new_node)
 
-    def handleClosedBracket(self, content, i):
+    def handleClosedBracket(self, content, i): # done
         if content:
             new_node = node.Node(content, self.current)
             self.current.adoptChild(new_node)
@@ -98,11 +98,11 @@ class TermTree:
             for child in node.children:
                 self.substituteFromNode(substitutionMap, child)
 
-    def setRoot(self, node):
+    def setRoot(self, node): # done
         if self.root is None:
             self.root = node
 
-    def printTree(self):
+    def printTree(self): # done
         if self.root:
             print(self.root.treeString(True))
         else:
@@ -126,7 +126,7 @@ class TermTree:
         else:
             print("This is not a term because it is not a valid term name.")
 
-    def getRoot(self) -> str:
+    def getRoot(self) -> str: # done
         if self.root:
             return self.root
         else:

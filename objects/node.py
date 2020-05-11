@@ -30,7 +30,7 @@ class Node:
         """
         return len(self.children)
 
-    def expressionString(self):
+    def expressionString(self, activatePosition):
         """
         Function which pretty prints the expression.
         """
@@ -40,33 +40,36 @@ class Node:
             string = string + "("
             delimitator = ""
             for child in self.children:
-                string = string + delimitator + child.expressionString()
+                string = string + delimitator + child.expressionString(activatePosition)
                 delimitator = ","
             string = string + ")"
 
         return string
 
-    def treeStringRecursive(self, prefix, position):
+    def treeStringRecursive(self, prefix, activatePosition):
         """
         Function which constructs the tree.
         """
         string = ""
         for child in self.children:
-            if position:
+            if activatePosition:
                 p = " (" + child.position + ")"
             else:
                 p = ""
             if child == self.children[-1]:
                 string = string + (prefix + "└── " + child.content) + p + "\n"
-                string = string + child.treeStringRecursive( prefix + "    ", position)
+                string = string + child.treeStringRecursive(prefix + "    ", activatePosition)
             else:
                 string = string + (prefix + "├── " + child.content) + p + "\n"
-                string = string + child.treeStringRecursive( prefix + "│   ", position)
+                string = string + child.treeStringRecursive(prefix + "│   ", activatePosition)
 
         return string
 
-    def treeString(self, position=False):
+    def treeString(self, activatePosition=False):
         """
         Function which pretty prints the expression as tree.
         """
-        return self.content + " (" + self.position + ") " + "\n" + self.treeStringRecursive("", position)
+        if activatePosition:
+            return self.content + " (" + self.position + ") " + "\n" + self.treeStringRecursive("", activatePosition)
+        else:
+            return self.content + self.position + "\n" + self.treeStringRecursive("", activatePosition)
