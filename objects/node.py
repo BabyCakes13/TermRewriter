@@ -24,12 +24,6 @@ class Node:
             # If the node does not have a parent, the node is the root which has empty string as position.
             return ""
 
-    def getArity(self):
-        """
-        The arity of the function is actually given by the number of its children.
-        """
-        return len(self.children)
-
     def expressionString(self, activatePosition):
         """
         Function which pretty prints the expression.
@@ -73,3 +67,9 @@ class Node:
             return self.content + " (" + self.position + ") " + "\n" + self.treeStringRecursive("", activatePosition)
         else:
             return self.content + self.position + "\n" + self.treeStringRecursive("", activatePosition)
+
+    def getArity(self):
+        """
+        The arity of the function is actually given by the number of its children.
+        """
+        return len(self.children)
