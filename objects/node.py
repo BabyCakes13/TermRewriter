@@ -16,7 +16,7 @@ class Node:
     @property
     def position(self):
         """
-        Get the position on the spot by recusrivelly searching up in the tree.
+        Get the position of the node by recusrivelly searching up in the tree.
         """
         if self.parent:
             return str(self.parent.position + str(self.parent.children.index(self) + 1))

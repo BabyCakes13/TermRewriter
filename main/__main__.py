@@ -1,7 +1,5 @@
 import sys
-print (sys.path)
 
-import main.application
 from utils import expression_parser, term
 
 
