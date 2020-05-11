@@ -5,14 +5,7 @@ import main.application
 from utils import expression_parser, term
 
 
-# expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
-#
-# substitutionMap = {
-# "x": "m(y)",
-# "Y": "blabla"
-# }
-
-def test_parsing(expression):
+def test_parsing(expression, activatePosition):
     parser = expression_parser.ExpressionParser(expression)
     parser.parseExpression()
 
@@ -27,7 +20,7 @@ def test_parsing(expression):
     print(expression)
     # expressionTree.printExpression(activatePosition=True)
     print("TREE: \n")
-    termTree.printTree(activatePosition=True)
+    termTree.printTree(activatePosition)
 
 def valid_test_expressions():
     valid_test_expressions = [
@@ -49,8 +42,7 @@ def invalid_test_expressions():
 
     return invalid_test_expressions
 
-
-if __name__ == "__main__":
+def test_different_expressions():
     valid_test_expressions = valid_test_expressions()
     invalid_test_expressions = invalid_test_expressions()
 
@@ -64,3 +56,15 @@ if __name__ == "__main__":
     for expression in invalid_test_expressions:
         test_parsing(expression)
         print("\n\n****************************************************\n\n")
+
+
+if __name__ == "__main__":
+
+    expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
+
+    substitutionMap = {
+    "x": "m(y)",
+    "Y": "blabla"
+    }
+
+    test_parsing(expression, activatePosition=False)
