@@ -1,49 +1,60 @@
-class Node:
-    """
-    This will be a term of an expression.
-    """
+"""Module which implements the Term class."""
 
-    POSITION = False # When enabled, the tree also displays the position of the terms.
+
+class Term:
+    """This will represent a term of an expression."""
+
+    # When enabled, the tree also displays the position of the terms.
+    POSITION = False
 
     def __init__(self, content, parent):
+        """
+        Initialise the term related objects.
+
+        Each term has a content, as well as remembering their parent and
+        children.
+        """
         self.content = content
         self.parent = parent
         self.children = []
 
     def adoptChild(self, child):
+        """Adopt the child whenever we find a new node with this parent."""
         self.children.append(child)
 
     @property
     def position(self):
         """
-        Get the position of the node by recusrivelly searching up in the tree.
+        Get the position of the term.
+
+        By recusrivelly searching up in the tree.
         """
         if self.parent:
-            return str(self.parent.position + str(self.parent.children.index(self) + 1))
+            parent_p = str(self.parent.position)
+            children_p = str(self.parent.children.index(self) + 1)
+            return str(parent_p + children_p)
         else:
-            # If the node does not have a parent, the node is the root which has empty string as position.
+            # If the term does not have a parent, the term is the root which
+            #  has empty string as position.
             return ""
 
     def expressionString(self, activatePosition):
-        """
-        Function which pretty prints the expression.
-        """
+        """Pretty print the expression."""
         string = self.content
 
         if len(self.children) > 0:
             string = string + "("
             delimitator = ""
             for child in self.children:
-                string = string + delimitator + child.expressionString(activatePosition)
+                string = string + delimitator + \
+                    child.expressionString(activatePosition)
                 delimitator = ","
             string = string + ")"
 
         return string
 
     def treeStringRecursive(self, prefix, activatePosition):
-        """
-        Function which constructs the tree.
-        """
+        """Construct the term tree."""
         string = ""
         for child in self.children:
             if activatePosition:
@@ -60,16 +71,18 @@ class Node:
         return string
 
     def treeString(self, activatePosition=False):
-        """
-        Function which pretty prints the expression as tree.
-        """
+        """Pretty print the expression as tree."""
         if activatePosition:
-            return self.content + " (" + self.position + ") " + "\n" + self.treeStringRecursive("", activatePosition)
+            return self.content + " (" + self.position + ") " + "\n" + \
+                self.treeStringRecursive("", activatePosition)
         else:
-            return self.content + self.position + "\n" + self.treeStringRecursive("", activatePosition)
+            return self.content + self.position + "\n" + \
+                self.treeStringRecursive("", activatePosition)
 
     def getArity(self):
         """
-        The arity of the function is actually given by the number of its children.
+        Return the arity.
+
+        The arity of the function is given by the number of its children.
         """
         return len(self.children)

@@ -1,18 +1,18 @@
-import node
+"""Module which implements the term tree."""
+from . import term
 
 
 class TermTree:
-    """
-    This will be the tree representation of a given expression.
-    """
+    """This will be the tree representation of a given expression."""
 
     def __init__(self, expression):
+        """Define the base of a term tree."""
         self.expression = expression
 
         self.delimitators = {
-        '(': self.handleOpenBracket,
-        ',': self.handleComma,
-        ')': self.handleClosedBracket
+            '(': self.handleOpenBracket,
+            ',': self.handleComma,
+            ')': self.handleClosedBracket
         }
 
         self.root = None
@@ -20,7 +20,24 @@ class TermTree:
 
         self.parseExpression()
 
-    def parseExpression(self): # done
+    def parseExpression(self):
+        """
+        Parse the experssion to form the term tree.
+
+        We consider:
+        - each opened parantheses the creation of a new level in the tree
+            (thus, going down);
+        - each comma a new child of a term;
+        - each closed parantheses a level upwards of the tree (thus, going up).
+        Because of this, we are validating the expression while parsing it:
+        - if the current term does not point to the parent's root when the
+            parsing is done,
+        then there were not enough parantheses closed in order to go upwards
+            enough on the branches until the root is reached.
+        - if when closing a parantheses the current term is already none, then
+            the needed number of closed parantheses was already
+        reached and there are no more branches to go upwards to.
+        """
         content = ""
 
         for i, character in enumerate(self.expression):
@@ -35,88 +52,115 @@ class TermTree:
             self.handleNewTerm(content, i)
 
         if self.current is not None:
-            print ("Current", self.current)
-            print ("Root", self.root)
+            print("Current", self.current)
+            print("Root", self.root)
 
-            # If parsing stops at a node which is not the root, then it did not close all the parentheses / did not make its way back to the top.
+            # If parsing stops at a term which is not the root, then it did not
+            # close all the parentheses / did not make its way back to the top.
             print("Invalid expression. Try closing all parentheses.")
             return False
 
-    def handleNewTerm(self, content, i): # done
+    def handleNewTerm(self, content, i):
+        """Handle new term case."""
         # PS. this also treats the case when there is only one item: s = x
         if len(content) == 0:
             print("Empty item found at position %d" % i)
             return
 
-        new_node = node.Node(content, self.current)
-        self.setRoot(new_node)
+        new_term = term.Term(content, self.current)
+        self.setRoot(new_term)
 
-        return new_node
+        return new_term
 
-    def handleOpenBracket(self, content, i): # done
-        new_node = self.handleNewTerm(content, i)
+    def handleOpenBracket(self, content, i):
+        """
+        Handle open bracket case.
+
+        We know there must be a child after an opened parantheses.
+        """
+        new_term = self.handleNewTerm(content, i)
 
         if self.current:
-            self.current.adoptChild(new_node)
+            self.current.adoptChild(new_term)
 
-        self.current = new_node
+        self.current = new_term
 
-    def handleComma(self, content, i): # done
+    def handleComma(self, content, i):
+        """
+        Handle comma case.
+
+        If we find a comma, we know that the content must be a child.
+        """
         if content:
-            new_node = node.Node(content, self.current)
-            self.current.adoptChild(new_node)
+            new_term = term.Term(content, self.current)
+            self.current.adoptChild(new_term)
 
-    def handleClosedBracket(self, content, i): # done
+    def handleClosedBracket(self, content, i):
+        """
+        Handle closed brackets.
+
+        There are two cases here: either the content before is a term, either
+        it is another closed parantheses.
+        """
         if content:
-            new_node = node.Node(content, self.current)
-            self.current.adoptChild(new_node)
+            new_term = term.Term(content, self.current)
+            self.current.adoptChild(new_term)
 
         if self.current:
             self.current = self.current.parent
         else:
-            # If current becomes null after the parsing, then there were too many parentheses opened.
+            # If current becomes null after the parsing, then there were too
+            # many parentheses opened.
             print("Too many parantheses closed at position %d" % i)
             return False
 
     def substitute(self, substitutionMap):
-        self.substituteFromNode(substitutionMap, self.root)
+        """Substitute using the substitutin map provided."""
+        self.substituteFromTerm(substitutionMap, self.root)
 
-    def substituteFromNode(self, substitutionMap, node):
-        if node.content in substitutionMap.keys():
-            foundSubstitution = substitutionMap[node.content]
+    def substituteFromTerm(self, substitutionMap, term):
+        """Recursivelly substitute in the tree."""
+        if term.content in substitutionMap.keys():
+            foundSubstitution = substitutionMap[term.content]
 
-            print ("replacing ", node.content, node, " with ", foundSubstitution)
+            print("Replace ", term.content, term, " with ", foundSubstitution)
 
             substitutionTree = TermTree(foundSubstitution)
             substitutionTree.printTree()
             substitutionTree.printExpression()
 
-            nodePosition = node.parent.children.index(node)
-            node.parent.children[nodePosition] = substitutionTree.getRoot()
-            node.parent.children[nodePosition].parent = node.parent
+            termPosition = term.parent.children.index(term)
+            term.parent.children[termPosition] = substitutionTree.getRoot()
+            term.parent.children[termPosition].parent = term.parent
         else:
-            for child in node.children:
-                self.substituteFromNode(substitutionMap, child)
+            for child in term.children:
+                self.substituteFromTerm(substitutionMap, child)
 
-    def setRoot(self, node): # done
+    def setRoot(self, term):
+        """Set root, if there is none yet."""
         if self.root is None:
-            self.root = node
+            self.root = term
 
-    def printTree(self): # done
+    def printTree(self, activatePosition=True):
+        """Print the expression in tree form."""
         if self.root:
-            print(self.root.treeString(True))
+            print(self.root.treeString(activatePosition))
         else:
             print("There is no root.")
 
-    def printExpression(self):
+    def printExpression(self, activatePosition=True):
+        """Print the experssion in, well, expression form."""
         if self.root:
-            print(self.root.expressionString())
+            print(self.root.expressionString(activatePosition))
         else:
             print("There is no root.")
 
     def validateTerm(self, term):
         """
-        Function which checks whether a string is a term based on whether it appears in the arity map or if it is formed of only letters.
+        Check whether the term is valid.
+
+        Based on whether it is formed only of letters or (not implemented yet)
+        whether it appears in the arity map. Needs tweaking.
         """
         if term.isalpha():
             if term in self.arityMap.keys():
@@ -126,20 +170,21 @@ class TermTree:
         else:
             print("This is not a term because it is not a valid term name.")
 
-    def getRoot(self) -> str: # done
+    def getRoot(self) -> str:
+        """Return the root of the tree."""
         if self.root:
             return self.root
         else:
             print("No root set.")
 
 
-if __name__=="__main__":
-    #expression = "f(e,x,y)"
+if __name__ == "__main__":
+    # expression = "f(e,x,y)"
     expression = "f1(f2(x,f3(i(f4(x,f5(H,j))),e(i(x),Y))))"
 
     substitutionMap = {
-    "x": "m(y)",
-    "Y": "blabla"
+        "x": "m(y)",
+        "Y": "blabla"
     }
 
     expressionTree = TermTree(expression)
